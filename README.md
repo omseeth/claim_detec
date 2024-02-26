@@ -24,8 +24,7 @@ sentence level, the same corpus modified by Daxenberger et al. (2017)
 contains 7051 sentences where 2093 are annotated as **claim** and 4958
 as **non-claims**.
 
-The corpora are saved in zip format in /data and need to be unzipped for 
-running the notebooks.
+The corpora need to be downloaded manually and savet at /data.
 
 
 ## Installing Packages

@@ -36,8 +36,6 @@ packages for running the Jupyter Notebook, please use:
 The feature based models use two types of pretrained embeddings: GloVe and 
 word2vec. As these are relatively large files, they need to be added manually to /embeddings. 
 
-The training corpora are stored in /data and need to be unzipped.
-
 ## Results
 
 As this paper follows Daxenberger et al. (2017), two groups of classifier

@@ -7,6 +7,20 @@ import pandas as pd
 from pathlib import Path
 
 
+def downsample(df):
+    """
+    Helper function to downsample dataframes
+    input: pandas dataframe
+    return: pandas dataframe
+    """
+    df_minority  = df[df["target"]==1] # claims
+    df_majority = df[df["target"]==0] # non-claims
+    df_majority = df_majority.sample(len(df_minority),random_state=0)
+    df = pd.concat([df_majority, df_minority])    
+    
+    return df
+
+
 class StabGurevychCorpus:
     """Load corpus files to pandas frame. Class object can be used for
     further processing."""
@@ -48,11 +62,6 @@ class StabGurevychCorpus:
                                                     columns=cols)
         self.df_non_claims["target"] = 0
 
-        # downsample majority class
-
-        self.df_non_claims = self.df_non_claims.sample(n=len(
-            self.df_claims), random_state=44)
-
         # shuffle rows with seed = 1
 
         self.df_all = pd.concat([self.df_claims, self.df_non_claims],
@@ -77,15 +86,6 @@ class DaxenbergerModified:
         self.df_all.columns = ["text", "target"]
 
         self.df_all = self.df_all.drop_duplicates().reset_index(drop=True)
-        
-        # downsample majority class
-
-        print("Length of minority and majority \n")
-        self.df_minority  = self.df_all[self.df_all['target']==1] # claims
-        self.df_majority = self.df_all[self.df_all['target']==0] # non-claims
-        self.df_majority = self.df_majority.sample(len(self.df_minority),
-                                                   random_state=0)
-        self.df_all = pd.concat([self.df_majority, self.df_minority])
 
         # shuffle rows with seed = 1
 
@@ -95,6 +95,8 @@ class DaxenbergerModified:
 if __name__ == "__main__":
 
     # Load first corpus
+
+    print("\nRun tests on corpus 1\n")
 
     corpus_1 = StabGurevychCorpus()
 
@@ -109,6 +111,9 @@ if __name__ == "__main__":
     baseline = len(corpus_1.non_claims) / (len(corpus_1.non_claims) + len(corpus_1.claims))
 
     print(f"Majority baseline: {round(baseline, 2)}")
+
+    # downsampling
+    downsample_1 = downsample(corpus_1.df_all)
 
     # Manual check of mean statement length from corpus
     sum_claim_n_clause = 0 
@@ -130,21 +135,30 @@ if __name__ == "__main__":
 
     # Load second corpus
 
+    print("\nRun tests on corpus 2\n")
+
     corpus_2 = DaxenbergerModified()
     print(corpus_2.df_all.head)
+
+    # downsampling
+
+    downsample_2 = downsample(corpus_2.df_all) 
 
     # Manual check of mean statement length from corpus
     sum_claim_n_sent = 0 
     sum_non_claim_n_sent = 0 
 
-    for expression in corpus_2.df_minority["text"]:
+    claims_2 = corpus_2.df_all[corpus_2.df_all["target"]==1]
+    non_claims_2 = corpus_2.df_all[corpus_2.df_all["target"]==0]
+
+    for expression in claims_2["text"]:
         n = len(expression.split())
         sum_claim_n_sent += n
     
-    print(f"Average length of claim at sentence level: {(sum_claim_n_sent / len(corpus_2.df_minority))}")
+    print(f"Average length of claim at sentence level: {(sum_claim_n_sent / len(claims_2))}")
 
-    for expression in corpus_2.df_majority["text"]:
+    for expression in non_claims_2["text"]:
         n = len(expression.split())
         sum_non_claim_n_sent += n
     
-    print(f"Average length of non-claim at sentence level: {(sum_non_claim_n_sent / len(corpus_2.df_majority))}")
+    print(f"Average length of non-claim at sentence level: {(sum_non_claim_n_sent / len(non_claims_2))}")

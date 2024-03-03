@@ -55,10 +55,10 @@ models are used: 1) Logistic Regression with hand-selected features,
 The instances from the corpora are downsampled to have equal set
 sizes for each target.
 
-![image info](./images/single_feature_pipeline.png)
-![image info](./images/feature_union_pipeline.png)
-![image info](./images/deep_neural_network_pipeline.png)
-![image info](./images/conjunction_tests.png)
+![image info](./images/single_feature_pipelines.png)
+![image info](./images/feature_union_pipelines.png)
+![image info](./images/deep_neural_network_pipelines.png)
+![image info](./images/conjunction_experiments.png)
 
 ## Resources
 
